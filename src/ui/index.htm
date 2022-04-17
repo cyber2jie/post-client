@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <style src="index.css"></style>
+    <script type="text/tiscript">
+    include("index.tis")
+    </script>
+  </head>
+  <body>
+    <div .loading>
+      <div .loading-box>
+        loading...
+        <p>please wait</p>
+      </div>
+    </div>
+    <div .container>
+      <div .container-item .inline-box>
+        <div .select .inline-box>
+        <span .text-color>method</span>
+        <select .selection>
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+        </select>
+        </div>
+        <input  type="text"  #pc-input/>
+        <span .btn-primary #send-btn title="send">Send</span>
+      </div>
+      <div .container-item>
+        <nav .tab-nav>
+          <a .tab-header #tab-header-params title="params" .tab-item tab-id="params">params</a>
+          <a .tab-header #tab-header-form   title="form" tab-id="form">form</a>
+          <a .tab-header #tab-header-headers title="headers" tab-id="headers">headers</a>
+        </nav>
+        <div .tab-content>
+         <div #tab-content-params>
+           <ul #params>
+           </ul>
+           <span .btn-primary #paramAddBtn>add</span>
+         </div>
+         <div #tab-content-form>
+          <ul #form>
+          </ul>
+          <span .btn-primary #formAddBtn>add</span>
+         </div>
+         <div #tab-content-headers>
+          <ul #headers>
+          </ul>
+          <span .btn-primary #headerAddBtn>add</span>
+         </div>
+        </div>
+      </div>
+      <div .container-item>
+        <label .rep-label>response</label>
+        <select #response-type>
+          <option value="header">header</option>
+          <option value="body" selected>body</option>
+        </select>
+        <div #response>
+
+        </div>
+      </div>
+    </div>
+  </body>
+</html

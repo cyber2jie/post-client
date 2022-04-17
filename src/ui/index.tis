@@ -1,0 +1,170 @@
+ function self.ready(){
+     $(#tab-content-params).style["display"]="block"
+ }
+ event click $(.tab-header){
+     $(#tab-header-params).attributes.removeClass("tab-item")
+     $(#tab-header-form).attributes.removeClass("tab-item")
+     $(#tab-header-headers).attributes.removeClass("tab-item")
+     var tabId=this.attributes["tab-id"]
+     this.attributes.addClass("tab-item")
+     var tabContent={
+         "params":$(#tab-content-params),
+         "form":$(#tab-content-form),
+         "headers":$(#tab-content-headers)
+     }
+     for(var k in Object.keys(tabContent)){
+         tabContent[k].style["display"]="none"
+     }
+     tabContent[tabId].style["display"]="block"
+}
+event click $(#paramAddBtn){
+    $(#params).append(
+               <li>
+               <div .content-row>
+               <span>name</span>
+               <input type="text" .name></input>
+               <span>value</span>
+               <input type="text" .value></input>
+               <span .btn-primary .btn-danger .row-delete>delete</span>
+               </div>
+               </li>
+               )
+}
+event click $(#formAddBtn){
+    $(#form).append(
+               <li>
+              <div .content-row>
+              <span>name</span>
+              <input type="text" .name></input>
+              <span>type</span>
+              <select .form-type-select>
+                <option value="text">text</option>
+                <option value="file">file</option>
+              </select>
+              <span>value</span>
+              <span .value-box>
+              <input type="text" .value></input>
+              </span>
+              <span .btn-primary .btn-danger .row-delete>delete</span>
+             </div>
+            </li>
+               )
+}
+event click $(#headerAddBtn){
+    $(#headers).append(
+              <li>
+              <div .content-row>
+              <span>name</span>
+              <input type="text" .name></input>
+              <span>value</span>
+              <input type="text" .value></input>
+              <span .btn-primary .btn-danger .row-delete>delete</span>
+              </div>
+               </li>
+               )
+}
+event click $(.row-delete){
+    this.parent.parent.remove()
+}
+
+function bindSelectFile(){
+    var path=view.selectFile(#load, "*.*" , "*.*")
+    if(path){
+    var subPath=path
+    if(subPath.length>16){
+        subPath=subPath.substring(0,16)+"..."
+    }
+    this.text=subPath
+    this.attributes["title"]=path
+    }
+}
+event change $(.form-type-select){
+    var type=this.value
+    var el=this.parent.$(.value-box)
+    el.clear()
+    if(type=="file"){
+        el.append(
+            <span .value .file-select>select file</span>
+        )
+        var fileSelectors=$$(.file-select)
+        for(var fileSelector in fileSelectors){
+            fileSelector.off(bindSelectFile)
+            fileSelector.on("click",bindSelectFile)
+        }
+    }else{
+    el.append(
+         <input type="text" .value></input>
+    )
+
+    }
+}
+event change $(#response-type){
+    var type=this.value
+    var show=""
+    if(type=="header"){
+     show=$(#response).attributes["headers"]
+    }else if(type=="body"){
+     show=$(#response).attributes["resp"]
+    }
+    if(!show){
+        show=""
+    }
+    $(#response).text=show
+}
+event click $(#send-btn){
+    var method=$(.selection).value
+    var url=$(#pc-input).value
+    if(url.trim()==""){
+       view.msgbox(#alert,"url is required")
+       return 0
+    }
+    url=url.toLowerCase()
+    var urlCheckRegExp = new RegExp("((http)|(https))://.+")
+    if(!urlCheckRegExp.test(url)){
+       view.msgbox(#alert,"url is wrong")
+       return 0
+    }
+    var params=[]
+    var paramsRows=$(#params).$$(.content-row)
+    for(var paramsRow in paramsRows){
+        var name=paramsRow.$(.name).value
+        var value=paramsRow.$(.value).value
+        if(name && value){
+        params.push({name:name,value:value})
+        }
+    }
+    var form=[]
+    var formRows=$(#form).$$(.content-row)
+    for(var formRow in formRows){
+        var name=formRow.$(.name).value
+        var type=formRow.$(.form-type-select).value
+        var value=""
+        if(type=="file"){
+            value=formRow.$(.value).attributes["title"].replace("file://","")
+        }else{
+            value=formRow.$(.value).value
+        }
+        if(name && value){
+        form.push({name:name,type:type,value:value})
+        }
+    }
+    var headers=[]
+    var headersRows=$(#headers).$$(.content-row)
+    for(var headersRow in headersRows){
+        var name=headersRow.$(.name).value
+        var value=headersRow.$(.value).value
+        if(name && value){
+        headers.push({name:name,value:value})
+        }
+    }
+    $(.loading).style["display"]="block"
+    var result=view.curl(method,url,params,form,headers)
+}
+function onHeaderReady(headers){
+    $(#response).attributes["headers"]=headers
+}
+function onRespReady(resp){
+    $(#response).attributes["resp"]=resp.toString("UTF-8")
+    $(#response-type).sendEvent("change")
+    $(.loading).style["display"]="none"
+}

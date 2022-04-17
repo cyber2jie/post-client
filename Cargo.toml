@@ -1,0 +1,10 @@
+[package]
+name = "post-client"
+version = "0.1.0"
+edition = "2021"
+build = "src/build.rs"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+sciter-rs = "0.5.58"
+curl = "0.4.42"
