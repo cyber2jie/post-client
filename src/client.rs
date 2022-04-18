@@ -110,7 +110,9 @@ macro_rules! request {
            }
            part.add().unwrap_or_default();
        }
+       if $req.form.len()>0{
        easy.httppost(form).unwrap();
+       }
        //headers
        for header in &$req.headers{
            let mut header_line=String::new();
